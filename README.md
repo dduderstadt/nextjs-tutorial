@@ -120,3 +120,38 @@ When a user visits a route:
 2. **Wait**: if a new event occurs before the timer expires, the timer is reset.
 3. **Execution**: if the timer reaches the end of its countdown, the debounced function is executed.
 
+## Mutating Data
+
+### What are Server Actions?
+**React Server Actions** allow you to run asynchronous code directly on the server. They eliminate the need to create API endpoints to mutate your data. Instead, you write asynchronous functions that execute on the server and can be invoked from your Client or Server Components.
+
+Security is a top priority for web apps, as they can be vulnerable to various threats. This is where Server Actions come in. They include features like encrypted closures, strict input checks, error message hashing, host restrictions, and more - all working together to significantly enhance your application security.
+
+### Using forms with Server Actions
+In React, you can use the `action` attribute in the `<form>` element to invoke actions. The action will automatically receive the native `FormData` object, containing the captured data.
+
+An advantage of invoking a Server Action within a Server Component is progressive enhancement - forms work even if JavaScript has not yet loaded on the client. (e.g. Without slower internet connections)
+
+### Next.js with Server Actions
+Server Actions are also deeply integrated with Next.js caching. When a form is submitted through a Server Action, not only can you use the action to mutate data, but you can also revalidate the associated cache using APIs like revalidatePath and revalidateTag.
+
+### Creating an invoice
+1. Create a form to capture the user's input
+2. Create a Server Action and invoke it from the form
+3. Inside your Server Action, extract the data from the `formData` object
+4. Validate and prepare the data to be inserted into your database
+5. Insert the data and handle any errors
+6. Revalidate the cache and redirect the user back to invoices page
+
+#### Storing values in cents
+It's usually a good practice to store monetary values in cents in your database to eliminate JavaScript floating-point errors and ensure greater accuracy
+
+### Updating an invoice
+1. Create a new dynamic route segment with the invoice id
+2. Read the invoice id from the page params
+3. Fetch the specific invoice from your database
+4. Pre-populate the form with the invoice data
+5. Update the invoice data in your database
+
+### Dynamic Routes
+Next.js allows you to create Dynamic Route Segments when you don't know the exact segment name and want to create routes based on data. You can create dynamic route segments by wrapping a folder's name in square brackets (e.g. [id], [post], [slug])
