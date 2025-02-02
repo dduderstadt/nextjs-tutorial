@@ -90,6 +90,7 @@ export async function fetchCardData() {
   }
 }
 
+// Adding pagination allows users to navigate through the different pages to view all the invoices
 const ITEMS_PER_PAGE = 6;
 export async function fetchFilteredInvoices(
   query: string,

@@ -100,3 +100,23 @@ When a user visits a route:
 - Partial Prerendering uses React's Suspense to defer rendering parts of your application until some condition is met (e.g. data is loaded)
 - The Suspense fallback is embedded into the initial HTML file along with the static content. At build time (or during revalidation), the static content is **prerendered** to create a static shell. The rendering of dynamic content is **postponed** until the user requests the route
 - Wrapping a component in `<Suspense>` doesn't make the component itself dynamic, but rather Suspense is used as a boundary between your static and dynamic code
+
+### Adding the search functionality
+**useSearchParams** - allows you to access the parameters of the current URL
+**usePathname** - lets you read the current URL's pathname
+**useRouter** - enables navigation between routes within client components programmatically
+
+#### Implementation Steps
+1. Capture the user's input
+2. Update the URL with the search params
+3. Keep the URL in sync with the input field
+4. Update the table to reflect the search query
+
+### Debouncing
+**Debouncing** is a programming practice that limits the rate at which a function can fire. In our case, you only want to query the database when the user has stopped typing.
+
+#### How Debouncing Works
+1. **Trigger Event**: when an event that should be debounced (like a keystroke in the search box) occurs, a timer starts.
+2. **Wait**: if a new event occurs before the timer expires, the timer is reset.
+3. **Execution**: if the timer reaches the end of its countdown, the debounced function is executed.
+
