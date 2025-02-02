@@ -1,5 +1,9 @@
 import SideNav from '@/app/ui/dashboard/sidenav'; // Import the SideNav component
 
+export const experimental_ppr = true; // Enable PPR for the dashboard layout
+// You may not see a difference in your application in development, but you should notice a performance improvement in production.
+// Next.js will prerender the static parts of your route and defer the dynamic parts until the user requests them.
+
 // One benefit of using layouts in Next.js is that on navigation, only the page components update while the layout won't re-render.
 // This is called partial rendering which preserves client-side React state in the layout when transitioning between pages.
 export default function Layout({ children}: { children: React.ReactNode }) {

@@ -1,4 +1,4 @@
-import postgres from 'postgres';
+import postgres from 'postgres'; // Import the postgres library
 import {
   CustomerField,
   CustomersTableType,
@@ -9,19 +9,22 @@ import {
 } from './definitions';
 import { formatCurrency } from './utils';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' }); // Create a new connection to the Postgres DB (using POSTGRES_URL from .env file)
+
+// You can call `sql` anywhere on the server, like a Server Component. But for this tutorial, allow us to navigate the components more easily
+// so all the data queries are in `data.ts` file and can be imported into the components
 
 export async function fetchRevenue() {
   try {
     // Artificially delay a response for demo purposes.
     // Don't do this in production :)
 
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
+    console.log('Fetching revenue data...');
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     const data = await sql<Revenue[]>`SELECT * FROM revenue`;
 
-    // console.log('Data fetch completed after 3 seconds.');
+    console.log('Data fetch completed after 3 seconds.');
 
     return data;
   } catch (error) {
@@ -62,6 +65,8 @@ export async function fetchCardData() {
          SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
          FROM invoices`;
 
+    // By using Promise.all() you can start executing all data fetches at the same time, which is faster than waiting for each request to complete in a waterfall.
+    // Use a native JavaScript pattern that can be applied to any library or framework.
     const data = await Promise.all([
       invoiceCountPromise,
       customerCountPromise,
