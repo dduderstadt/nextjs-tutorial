@@ -155,3 +155,11 @@ It's usually a good practice to store monetary values in cents in your database 
 
 ### Dynamic Routes
 Next.js allows you to create Dynamic Route Segments when you don't know the exact segment name and want to create routes based on data. You can create dynamic route segments by wrapping a folder's name in square brackets (e.g. [id], [post], [slug])
+
+## Error Handling
+
+### Handling all errors with error.tsx
+The `error.tsx` file can be used to define a UI boundary for a route segment. It serves as a **catch-all** for unexpected errors and allows you to display a fallback UI to your users.
+
+### Handling 404 errors with the notFound function
+Another way you can handle errors gracefully is by using the `notFound` function. `error.tsx` is useful for catching uncaught exceptions, `notFound` can be used when you try to fetch a resource that doesn't exist

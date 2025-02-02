@@ -29,12 +29,16 @@ export async function createInvoice(formData: FormData) {
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
 
-    // Execute the SQL script to insert a new invoice
-    await sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
-    `;
-
+    try {
+        // Execute the SQL script to insert a new invoice
+        await sql`
+            INSERT INTO invoices (customer_id, amount, status, date)
+            VALUES (${customerId}, ${amountInCents}, ${status}, ${date})
+        `;
+    } catch (error) {
+            //TODO handle error
+            console.error('error creating invoice');
+        }
     // Since we're updating the data displayed in the invoices route, we want to clear this cache and trigger a new request to the server - we do this with revalidatePath
     revalidatePath('/dashboard/invoices');
     // Once the database has been updated, the /dashboard/invoices path will be revalidated and fresh data will be fetched from the server.
@@ -66,12 +70,17 @@ export async function updateInvoice(id: string, formData: FormData) {
     // Convert the amount to cents (precision)
     const amountInCents = amount * 100;
 
-    // Build and execute SQL against the database
-    await sql`
-        UPDATE invoices
-        SET customer_id=${customerId}, amount=${amountInCents}, status=${status}
-        WHERE id = ${id}
-    `;
+    try {
+        // Build and execute SQL against the database
+        await sql`
+            UPDATE invoices
+            SET customer_id=${customerId}, amount=${amountInCents}, status=${status}
+            WHERE id = ${id}
+        `;
+    } catch (error) {
+        //TODO handle error
+        console.error(error);
+    }
 
     // Revalidate path and redirect back to main invoices page
     revalidatePath('/dashboard/invoices'); // Clear client cache and make a new server request
@@ -79,9 +88,13 @@ export async function updateInvoice(id: string, formData: FormData) {
 }
 
 export async function deleteInvoice(id: string) {
-    await sql`
-        DELETE FROM invoices WHERE id = ${id}
-    `;
+    try {
+        await sql`
+            DELETE FROM invoices WHERE id = ${id}
+        `;
+    } catch (error) {
+        console.error(error);
+    }
     // Since this action is being called in the /dashboard/invoices path, we don't need to call redirect. Calling revalidatePath will trigger a new server request and re-render the table.
     revalidatePath('/dashboard/invoices');
 }

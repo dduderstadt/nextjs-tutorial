@@ -1,6 +1,7 @@
 import Form from '@/app/ui/invoices/edit-form';
 import Breadcrumbs from '@/app/ui/invoices/breadcrumbs';
 import { fetchInvoiceById, fetchCustomers } from '@/app/lib/data';
+import { notFound } from 'next/navigation';
 
 export default async function EditInvoicePage(props: { params: Promise<{ id: string }> }) {
     const params = await props.params;
@@ -9,6 +10,12 @@ export default async function EditInvoicePage(props: { params: Promise<{ id: str
         fetchInvoiceById(id),
         fetchCustomers()
     ]);
+
+    // If no invoice was found for the route param id, use notFound
+    if (!invoice) {
+        notFound(); // This will look for "not-found.tsx" in the same directory
+        // notFound will take precedence over error.tsx
+    }
     
     return (
         <main>
