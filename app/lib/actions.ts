@@ -4,6 +4,8 @@ import { z } from 'zod'; // You can manually validate types, or you can use a ty
 import postgres from 'postgres'; // Import postgres to save to the database
 import { revalidatePath } from 'next/cache'; // Next.js has a client-side router cache that stores the route segments in the user's browser for a time.
 import { redirect } from 'next/navigation'; // Used to redirect the user back to /dashboard/invoices page
+import { signIn } from '@/auth'; // Used for authentication
+import { AuthError } from 'next-auth'; // Used for authentication
 
 // Define the Zod schema that matches the shape of the form object.
 // The schema will validate the formData "shape" before saving it to a database.
@@ -145,4 +147,24 @@ export async function deleteInvoice(id: string) {
     }
     // Since this action is being called in the /dashboard/invoices path, we don't need to call redirect. Calling revalidatePath will trigger a new server request and re-render the table.
     revalidatePath('/dashboard/invoices');
+}
+
+// Define the authenticate action
+export async function authenticate(
+    prevState: string | undefined,
+    formData: FormData,
+) {
+    try {
+        await signIn('credentials', formData);
+    } catch (error) {
+        if (error instanceof AuthError) {
+            switch (error.type) {
+                case 'CredentialsSignin':
+                    return 'Invalid credentials.';
+                default:
+                    return 'Something went wrong.';
+            }
+        }
+        throw error;
+    }
 }

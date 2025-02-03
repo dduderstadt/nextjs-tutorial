@@ -184,3 +184,39 @@ By validating forms on the server, you can:
 - Ensure your data is in the expected format before sending it to your database.
 - Reduce the risk of malicious users bypassing client-side validation
 - Have one source of truth for what is considered *valid* data
+
+## Authentication vs Authorization
+- **Authentication** is about making sure the user is who they say they are. You're proving your identity with something you have like a username and password.
+- **Authorization** is the next step. Once a user's identity is confirmed, authorization decides what parts of the application they are allowed to use.
+
+### NextAuth.js
+We will be using NextAuth.js to add authentication to the application.
+NextAuth.js abstracts away much of the complexity involved in managing sessions, sign-in and sign-out, and other aspects of authentication.
+While you can manually implement these features, the process can be time-consuming and error-prone.
+NextAuth.js simplifies the process, providing a unified solution for auth in Next.js applications.
+- Installed *beta* version of NextAuth.js, which is compatible with **Next.js 14+**
+
+### Password hashing
+- Good practice to **hash** passwords before storing them in a database.
+- Hashing converts a password into a fixed length string of characters, which appears random, providing a layer of security even if the user's data is exposed.
+
+When seeding your database, we used a package called `bcrypt` to has the user's password before storing it in the database. We will need to create a separate file for the `bcrypt` package to compare that password entered by the user matches the one in the database. This is because `bcrypt` relies on Node.js APIs not available in Next.js Middleware.
+
+## Metadata
+
+### What is metadata?
+- Metadata provides additional details about a webpage.
+- It is not visible to the users visting the page.
+- It works behind the scenes, embedded within the page's HTML, usually within the `<head>` element.
+- This hidden information is crucial for search engines and other systems that need to understand your webpage's content better.
+
+### Why is metadata important
+Metadata plays a significant role in enhancing a webpage's SEO, making it more accessible and understandable for search engines and social media platforms
+
+### Open Graph Metadata
+This metadata enhances the way a webpage is represented when shared on social media platforms providing information such as the title, description, and preview image
+
+### Adding Metadata
+- **Config-based**: export a *static* `metadata` *object* or a dynamic *generateMetadata* function in a `layout.js` or `page.js` file.
+- **File-based**: *Next.js* has a range of special files that are specifically used for metadata purposes
+
