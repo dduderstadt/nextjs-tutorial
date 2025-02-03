@@ -7,6 +7,11 @@ import { lusitana } from "@/app/ui/fonts";
 import { InvoicesTableSkeleton } from "@/app/ui/skeletons";
 import { fetchInvoicesPages } from "@/app/lib/data";
 import { Suspense } from "react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+    title: 'Invoices' // This will go where the %s placeholder is and include | Acme Dashboard
+}
 
 // export default function InvoicesPage() {
 //     return <p>Invoices Page</p>;

@@ -14,6 +14,11 @@ import { Suspense } from 'react';
 import { LatestInvoicesSkeleton, RevenueChartSkeleton } from '@/app/ui/skeletons';
 import CardWrapper from '@/app/ui/dashboard/cards';
 import { CardSkeleton } from '@/app/ui/skeletons';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+    title: 'Dashboard'
+};
 
 // The DashboardPage component is an async server component. This allows us to use await to fetch data.
 export default async function DashboardPage() {
