@@ -9,9 +9,13 @@ import { redirect } from 'next/navigation'; // Used to redirect the user back to
 // The schema will validate the formData "shape" before saving it to a database.
 const FormSchema = z.object({
     id: z.string(),
-    customerId: z.string(),
-    amount: z.coerce.number(),
-    status: z.enum(['pending', 'paid']),
+    customerId: z.string({
+        invalid_type_error: 'Please select a customer.'
+    }),
+    amount: z.coerce.number().gt(0, { message: 'Please enter an amount greater than $0' }),
+    status: z.enum(['pending', 'paid'], {
+        invalid_type_error: 'Please select an invoice status.'
+    }),
     date: z.string(),
 });
 
@@ -19,13 +23,36 @@ const CreateInvoice = FormSchema.omit({id: true, date: true});
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' }); // Set up the SQL object
 
-export async function createInvoice(formData: FormData) {
+// Create State type
+export type State = {
+    errors?: {
+        customerId?: string[],
+        amount?: string[],
+        status?: string[]
+    };
+    message?: string | null
+};
+
+// export async function createInvoice(formData: FormData) {
+export async function createInvoice(prevState: State, formData: FormData) {
+    // prevState contains the state passed from the useActionState hook
     // Pass the rawFormData to CreateInvoice to validate the types
-    const { customerId, amount, status } = CreateInvoice.parse({
+    // const { customerId, amount, status } = CreateInvoice.parse({
+    const validatedFields = CreateInvoice.safeParse({
         customerId: formData.get('customerId'),
         amount: formData.get('amount'),
         status: formData.get('status'),
     });
+
+    if(!validatedFields.success) {
+        return {
+            errors: validatedFields.error.flatten().fieldErrors,
+            message: 'Missing fields. Failed to create invoice'
+        };
+    }
+
+    // Prepare data for insertion into the database
+    const { customerId, amount, status } = validatedFields.data;
     const amountInCents = amount * 100;
     const date = new Date().toISOString().split('T')[0];
 
@@ -37,7 +64,10 @@ export async function createInvoice(formData: FormData) {
         `;
     } catch (error) {
             //TODO handle error
-            console.error('error creating invoice');
+            // console.error('error creating invoice', error);
+            return {
+                message: `Database Error: Failed to Create Invoice.\n${error}`
+            }
         }
     // Since we're updating the data displayed in the invoices route, we want to clear this cache and trigger a new request to the server - we do this with revalidatePath
     revalidatePath('/dashboard/invoices');
@@ -59,13 +89,30 @@ export async function createInvoice(formData: FormData) {
 // Use Zod to update the expected type
 const UpdateInvoice = FormSchema.omit({ id: true, date: true }); // customerId, amount, status - id & date are being omitted
 
-export async function updateInvoice(id: string, formData: FormData) {
+export async function updateInvoice(
+    id: string,
+    prevState: State,
+    formData: FormData) {
+        // Validate the form data
+        const validatedFields = UpdateInvoice.safeParse({
+            customerId: formData.get('customerId'),
+            amount: formData.get('amount'),
+            status: formData.get('status'),
+        });
+
+        if (!validatedFields.success) {
+            return {
+                errors: validatedFields.error.flatten().fieldErrors,
+                message: 'Missing fields. Failed to Update Invoice.'
+            };
+        }
     // Extract the data from formData
-    const { customerId, amount, status } = UpdateInvoice.parse({
-        customerId: formData.get('customerId'),
-        amount: formData.get('amount'),
-        status: formData.get('status'),
-    });
+    // const { customerId, amount, status } = UpdateInvoice.parse({
+    //     customerId: formData.get('customerId'),
+    //     amount: formData.get('amount'),
+    //     status: formData.get('status'),
+    // });
+    const { customerId, amount, status } = validatedFields.data;
 
     // Convert the amount to cents (precision)
     const amountInCents = amount * 100;
@@ -79,7 +126,8 @@ export async function updateInvoice(id: string, formData: FormData) {
         `;
     } catch (error) {
         //TODO handle error
-        console.error(error);
+        // console.error(error);
+        return { message: `Database Error: Failed to Update Invoice.\n${error}`};
     }
 
     // Revalidate path and redirect back to main invoices page

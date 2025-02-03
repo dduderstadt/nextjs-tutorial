@@ -163,3 +163,24 @@ The `error.tsx` file can be used to define a UI boundary for a route segment. It
 
 ### Handling 404 errors with the notFound function
 Another way you can handle errors gracefully is by using the `notFound` function. `error.tsx` is useful for catching uncaught exceptions, `notFound` can be used when you try to fetch a resource that doesn't exist
+
+## Accessibility
+
+### What is accessibility?
+Accessibility refers to designing and implementing web applications that everyone can use, including those with disabilities. It's a vast topic that covers many areas, such as keyboard navigation, semantic HTML, images, colors, videos, etc.
+
+Next.js includes the `eslint-plugin-jsx-ally` plugin in its ESLint config to help catch accessibility issues early
+
+### Improving from accessibility
+- **Semantic HTML**: using semantic elements `<input>`, `<option>`, etc. instead of  `<div>`. This allows assistive technologies to focus on the input elements and provide appropriate contextual information to the user, making the form easier to navigate and understand
+- **Labelling**: including `<label>` and the `htmlFor` attribute ensures that each form field has a descriptive text label. Provides context and enhances usability by allowing users to click on the label to focus on the corresponding input field
+-**Focus Outline**: fields are properly styled to show an outline when they are in focus. Critical for accessibility as it visually indicates the active element on the page, helping both keyboard and screen reader users to understand where they are on the form. You can verify this by pressing *tab*
+
+### Form Validation
+Currently, if we submit a blank "create invoice" form, we get an error. This is because we are sending empty form values to the Server Actions. We can prevent this by validating the form on the *client* **OR** *server*
+
+### Server Side Validation
+By validating forms on the server, you can:
+- Ensure your data is in the expected format before sending it to your database.
+- Reduce the risk of malicious users bypassing client-side validation
+- Have one source of truth for what is considered *valid* data

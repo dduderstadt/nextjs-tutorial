@@ -19,7 +19,7 @@ import { fetchRevenue } from '@/app/lib/data';
 // Make component async, remove the props
 export default async function RevenueChart() {
   // Fetch revenue data inside the component
-  const revenue = await fetchRevenue();
+  const revenue: Revenue[] = await fetchRevenue();
   const chartHeight = 350;
   // NOTE: Uncomment this code in Chapter 7
 
